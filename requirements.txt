@@ -2,3 +2,7 @@ colorama
 requests
 BeautifulSoup4
 lxml
+pystyle
+datetime
+builtwith
+json
