@@ -9,6 +9,8 @@
 	• Парсинг TikTok в TXT файл
 	• Парсинг VK в TXT файл
 	• Парсинг OK.RU в TXT файл
+	• Брутфорс MD5 хэша
+	• CSGO FLOOD (Чтобы активировать нужно запустить CSGO с следующими параметрами игры: -netconport [тут порт])
 	• UDP FLOOD
 
 # Download last release
