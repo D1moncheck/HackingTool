@@ -15,6 +15,8 @@ import lxml
 import sys
 import builtwith
 import json
+from itertools import product
+import hashlib
 
 init(autoreset=True)
 
@@ -222,7 +224,83 @@ def wordpressgetinfo(Target):
     AdminpageUrl = Fore.YELLOW + '[+] '+'Админка: \n' + adminpage('http://' + Url)
     Infowebsite = Fore.YELLOW + '[+] '+'Информация: \n' + infoaboutwebsite('http://' + Url)
     print(Fore.RED + 'Домен: ' + Url + '\nIP: ' + Ip + '\n' + Infowebsite + '\n' + Username + '\n' + AdminpageUrl)
-    
+
+def computeMD5hash(string):
+  m = hashlib.md5()
+  m.update(string.encode('utf-8'))
+  return m.hexdigest()
+
+def BruteMD5():
+    md5hash = input('MD5 Hash: ')
+    maxlen = int(input('Максимальная длина брута: '))
+
+    chr = '''1): ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklnmopqrstuvwxyz1234567890
+2): abcdefghijklnmopqrstuvwxyz1234567890
+3): ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890
+4): 1234567890
+5): ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklnmopqrstuvwxyz
+6): ABCDEFGHIJKLMNOPQRSTUVWXYZ
+7): abcdefghijklnmopqrstuvwxyz'''
+
+    print(chr)
+
+    char_num = int(input('Выберите символы: '))
+
+    if char_num == 1:
+        chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklnmopqrstuvwxyz1234567890'
+    elif char_num == 2:
+        chars = 'abcdefghijklnmopqrstuvwxyz1234567890'
+    elif char_num == 3:
+        chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+    elif char_num == 4:
+        chars = '1234567890'
+    elif char_num == 5:
+        chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklnmopqrstuvwxyz'
+    elif char_num == 6:
+        chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    elif char_num == 7:
+        chars = 'abcdefghijklnmopqrstuvwxyz'
+
+    dic = input('Сохранить в TXT? (Y/N): ')
+    if dic.lower() == 'y':
+        name = input('Имя файла без расширения: ') + '.txt'
+
+    stop = 0
+    found = 0
+    lines = 0
+
+    if dic.lower() == 'y':
+        _file = open(name, 'w')
+
+    tic = time.time()
+
+    for length in range(1, maxlen):
+        to_attempt = product(chars, repeat=length)
+        for attempt in to_attempt:
+          crypt = computeMD5hash(''.join(attempt))
+          if crypt == md5hash:
+            print(Fore.GREEN + '[CRACKED] {} = {}\n'.format(crypt, ''.join(attempt)))
+            if dic == 'Y' or dic == 'y':
+              _file.write('[CRACKED] {} = {}\n'.format(crypt, ''.join(attempt)))
+            stop = 1
+            found = 1
+            break
+          else:
+            if dic.lower() == 'y':
+              _file.write('{} = {}\n'.format(crypt, ''.join(attempt)))
+            print('{} - {}'.format(''.join(attempt), crypt))
+            lines += 1
+        if stop == 1:
+          break
+
+    if dic.lower() == 'y':
+        _file.close()
+    toc = time.time()
+    ttn = toc - tic
+
+    print(Fore.GREEN + 'Готово! Завершено через {} секунд. Всего хэшей было сгенерированно - {}'.format(str(ttn), str(lines)))
+    if found == 0:
+        print(Fore.RED + 'MD5 не сбручен :(')
 
 art()
 
@@ -241,6 +319,7 @@ while True:
 		$ okparser - парсинг данных с одноклассников
 		$ udpflood - атака на IP до отказа (UDP)
 		$ wordpress - информация о CMS Wordpress
+		$ brutemd5 - брутфорс md5 хэша
 		$ clear - очистка консоли
 		''')
         pass
@@ -273,3 +352,6 @@ while True:
         os.system('cls')
         Target = str(input('URL: '))
         wordpressgetinfo(Target)
+    if start == 'brutemd5':
+        os.system('cls')
+        BruteMD5()
