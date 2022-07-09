@@ -15,7 +15,3 @@
 	• Брутфорс MD5 хэша
 	• CSGO FLOOD (Чтобы активировать нужно запустить CSGO с следующими параметрами игры: -netconport [тут порт])
 	• UDP FLOOD
-
-# Download last release
-
-<a href='https://github.com/D1moncheck/HackingTool/releases/tag/Release'>Download</a>
