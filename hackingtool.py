@@ -21,6 +21,8 @@ from telnetlib import Telnet
 
 init(autoreset=True)
 
+system = 0 #1 for windows, 0 for linux
+
 
 def art():
     print(Fore.RED + '''
@@ -216,8 +218,12 @@ def infoaboutwebsite(Url):
     return Info
 
 def wordpressgetinfo(Target):
-    Url = UrlTools(Target).title()
-    Ip = socket.gethostbyname(Url)
+    try:
+        Url = UrlTools(Target).title()
+        Ip = socket.gethostbyname(Url)
+    except socket.gaierror:
+        print('Домены третьего уровня не поддерживаются!')
+        return
     Username = Fore.YELLOW + '[+] Пользователи: \n' + getusernamewordpress(f'http://{Url}')
     AdminpageUrl = Fore.YELLOW + '[+] Админка: \n' + adminpage(f'http://{Url}')
     Infowebsite = Fore.YELLOW + '[+] Информация: \n' + infoaboutwebsite(f'http://{Url}')
@@ -316,6 +322,13 @@ def csgoflood(port):
     except ConnectionRefusedError:
         print('Хост не найден!')
 
+def clear():
+    if system == 1:
+        os.system('cls')
+    elif system == 0:
+        os.system('clear') 
+
+
 art()
 
 while True:
@@ -339,43 +352,43 @@ while True:
 		''')
         pass
     if start == 'checkhost':
-        os.system('cls')
+        clear()
         url = input('URL: ')
         checker(url)
     if start == 'ping':
-        os.system('cls')
+        clear()
         host = input('Хост: ')
         ping(host)
     if start == 'okparser':
-        os.system('cls')
+        clear()
         url = input('OK (url): ')
         okparsing(url)
     if start == 'udpflood':
-        os.system('cls')
+        clear()
         ip = str(input('IP: '))
         port = int(input('Port: '))
         thread = int(input('Thread: '))
         t = int(input('Times: '))
         launchudp(ip, port, thread, t)
     if start == 'tiktokparser':
-        os.system('cls')
+        clear()
         username = input('TikTok username (without @): ')
         tiktokparsing(username)
     if start == 'vkparser':
-        os.system('cls')
+        clear()
         url = input('VK (url): ')
         vkparsing(url)
     if start == 'wordpress':
-        os.system('cls')
+        clear()
         Target = str(input('URL: '))
         wordpressgetinfo(Target)
     if start == 'brutemd5':
-        os.system('cls')
+        clear()
         md5hash = input('MD5 Hash: ')
         BruteMD5(md5hash)
     if start == 'csgoflood':
-        os.system('cls')
+        clear()
         port = input('Порт для подключения: ')
         csgoflood(port)
     if start == 'clear':
-        os.system('cls')
+        clear()
