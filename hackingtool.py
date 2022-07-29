@@ -11,18 +11,23 @@ import random
 import socket
 import threading
 import webbrowser
-import lxml
 import sys
+import argparse
 import builtwith
 import json
 from itertools import product
 import hashlib
 from telnetlib import Telnet
+from fake_useragent import UserAgent
+
+#используется argparse для корректной работы с Windows и Linux
+parser = argparse.ArgumentParser()
+parser.add_argument ('-s', '--system', default='windows', help='Используйте флаг для того, чтобы выбрать систему. Стандартно выбрана Windows')
+args = parser.parse_args()
 
 init(autoreset=True)
 
-system = 0 #1 for windows, 0 for linux
-
+ua = UserAgent()
 
 def art():
     print(Fore.RED + '''
@@ -64,11 +69,11 @@ def ping(host):
 def tiktokparsing(username):
     url = f'https://socialblade.com/tiktok/user/{username}' #статистика socialblade
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36',
+        'User-Agent': ua.chrome,
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
     }
     response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, 'lxml')
+    soup = BeautifulSoup(response.text, 'html.parser')
     if soup.find('div', attrs={'style': 'width: 800px; padding: 40px; background: #ddac99; margin: 0px auto; color:#fff; text-align: center; font-weight: bold;'}) is not None:
         print(Fore.RED + 'У этого аккаунта меньше 25000 тысяч подписчиков, поэтому его нет в базе данных.')
     else:
@@ -91,11 +96,11 @@ def tiktokparsing(username):
 #vk parsing section
 def vkparsing(url):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36',
+        'User-Agent': ua.chrome,
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
     }
     response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, 'lxml')
+    soup = BeautifulSoup(response.text, 'html.parser')
     name = soup.find('h1', class_='page_name').text
     infos = soup.find_all('a', class_='page_counter')
     counts = [] #данные наполняются в пустой массив
@@ -113,7 +118,11 @@ def vkparsing(url):
 
 #ok parsing section
 def okparsing(url):
-    response = requests.get(url)
+    headers = {
+        'User-Agent': ua.chrome,
+        'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
+    }
+    response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
     name = soup.find('a', class_='profile-user-info_name')
     birthday = soup.find('div', attrs={"data-type": "AGE"})
@@ -222,7 +231,7 @@ def wordpressgetinfo(Target):
         Url = UrlTools(Target).title()
         Ip = socket.gethostbyname(Url)
     except socket.gaierror:
-        print('Домены третьего уровня не поддерживаются!')
+        print('Неправильный домен или домен третьего уровня!')
         return
     Username = Fore.YELLOW + '[+] Пользователи: \n' + getusernamewordpress(f'http://{Url}')
     AdminpageUrl = Fore.YELLOW + '[+] Админка: \n' + adminpage(f'http://{Url}')
@@ -323,9 +332,10 @@ def csgoflood(port):
         print('Хост не найден!')
 
 def clear():
-    if system == 1:
+    system = args.system
+    if system == 'windows':
         os.system('cls')
-    elif system == 0:
+    elif system == 'linux':
         os.system('clear') 
 
 
@@ -349,6 +359,7 @@ while True:
 		$ brutemd5 - брутфорс md5 хэша
 		$ csgoflood - CSGO Status Flood (Параметры запуска CSGO: -netconport [тут порт])
 		$ clear - очистка консоли
+		$ exit - выход
 		''')
         pass
     if start == 'checkhost':
@@ -392,3 +403,5 @@ while True:
         csgoflood(port)
     if start == 'clear':
         clear()
+    if start == 'exit':
+        exit(1)
