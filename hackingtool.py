@@ -1,4 +1,3 @@
-from re import U
 from colorama import init
 from colorama import Fore, Back, Style
 from pystyle import Colors, Colorate
