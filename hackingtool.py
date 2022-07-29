@@ -1,3 +1,4 @@
+from re import U
 from colorama import init
 from colorama import Fore, Back, Style
 from pystyle import Colors, Colorate
@@ -67,36 +68,37 @@ def ping(host):
 
 #tiktok parsing section
 def tiktokparsing(username):
-    url = f'https://socialblade.com/tiktok/user/{username}' #статистика socialblade
-    headers = {
-        'User-Agent': ua.chrome,
-        'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
-    }
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    if soup.find('div', attrs={'style': 'width: 800px; padding: 40px; background: #ddac99; margin: 0px auto; color:#fff; text-align: center; font-weight: bold;'}) is not None:
-        print(Fore.RED + 'У этого аккаунта меньше 25000 тысяч подписчиков, поэтому его нет в базе данных.')
-    else:
+    try:
+        url = f'https://socialblade.com/tiktok/user/{username}' #статистика socialblade
+        headers = {
+            'User-Agent': ua.random,
+            'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
+        }
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.text, 'html.parser')
         unwanted = soup.find('div', attrs={'style': 'float: right; opacity: 0.7; font-weight: bold;'})
         unwanted.extract() #выбрасывает ненужный код html
         infos = soup.find_all('div', class_='YouTubeUserTopInfo')
         counts = [] #данные наполняются в пустой массив
-
-        for i in infos:
+    except AttributeError:
+        print(Fore.RED + 'У этого аккаунта меньше 25000 тысяч подписчиков, поэтому его нет в базе данных.')
+        return
+    
+    for i in infos:
             itemName = i.find('span', class_='YouTubeUserTopLight')
             itemCount = i.find('span', attrs={'style': 'font-weight: bold;'})
             print(f'{itemName.text}: {itemCount.text}')
             counts.append(f'{itemName.text}: {itemCount.text}')
 
-        saveit = input('Сохранить в TXT файл? (y or n): ')
-        if saveit == 'Y' or saveit == 'y':
-            with open('TikTokData.txt', 'w') as file:
-                file.write(f'Username: {username}\n' + '\n'.join(counts))
+    saveit = input('Сохранить в TXT файл? (y or n): ')
+    if saveit == 'Y' or saveit == 'y':
+        with open('TikTokData.txt', 'w') as file:
+            file.write(f'Username: {username}\n' + '\n'.join(counts))
 
 #vk parsing section
 def vkparsing(url):
     headers = {
-        'User-Agent': ua.chrome,
+        'User-Agent': ua.random,
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
     }
     response = requests.get(url, headers=headers)
@@ -119,14 +121,13 @@ def vkparsing(url):
 #ok parsing section
 def okparsing(url):
     headers = {
-        'User-Agent': ua.chrome,
+        'User-Agent': ua.random,
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
     }
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
     name = soup.find('a', class_='profile-user-info_name')
     birthday = soup.find('div', attrs={"data-type": "AGE"})
-    living = soup.find('div', class_="user-profile_i_value ellip", attrs={"data-type": "TEXT"})
     photo = soup.find('a', class_='recent-photos_total-counter')
     friends = soup.find('a', attrs={"data-l": "outlandermenu,friendFriend"}).find('span')
     groups = soup.find('a', attrs={"data-l": "outlandermenu,friendAltGroup"}).find('span')
@@ -142,6 +143,9 @@ def okparsing(url):
     if saveit == 'Y' or saveit == 'y':
         with open('OKdata.txt', 'w') as file:
             file.write(f'URL: {url}\nПользователь: {name.text}\nДата рождения: {birthday.text}\nКоличество друзей: {friends.text}\nКоличество групп: {groups.text}\nКоличество фотографий: {photo.text}\nКоличество игр: {games.text}')
+
+def new_func(soup):
+    living = soup.find('div', class_="user-profile_i_value ellip", attrs={"data-type": "TEXT"})
 
 #udp flood section
 def launchudp(ip, port, thread, t):
@@ -167,76 +171,63 @@ def attackudp(ip, port, until_datetime):
             print(Fore.RED + '[@] Ошибка!')
 
 #wordpress section
-def UrlTools(Url):
-    if Url.lower().startswith('https://') or Url.lower().startswith('http://'):
-        Url = Url.replace('http://','').replace('https://','') #убирает https:// или http:// в начале ссылки
-    return Url
+def urlTools(url):
+    if url.lower().startswith('https://') or url.lower().startswith('http://'):
+        url = url.replace('http://','').replace('https://','') #убирает https:// или http:// в начале ссылки
+    return url
 
-def getusernamewordpress(Url):
+def getusernamewordpress(url):
     Headers = {
     'Accept':'*/*',
-    'Content-Type':'application/x-www-form-urlencoded',
-    'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
+    'User-Agent': ua.random
     }
-    r = requests.get(f'{Url}/wp-json/wp/v2/users/',headers=Headers).text
+    r = requests.get(f'{url}/wp-json/wp/v2/users/', headers=Headers).text
     j = json.loads(r)
-    Count = len(j) - 1
-    cn = 0
-    User = ''
-    for Val in j:
-        Split = '\n'
-        if Count == cn:
-            Split = ''
-        U = j[cn]['slug']
-        if not U == '':
-            User += Fore.GREEN + '   ' + '[+] ' + U + Split
-        cn += 1
-    if User == '':
-        User = Fore.RED + 'Не найдено!'
-    return User
+    count = len(j) - 1
+    attempts = 0
+    user = ''
+    for _ in j:
+        split = '\n'
+        if count == attempts :
+            split = ''
+        users = j[attempts ]['slug']
+        if not users == '':
+            user += Fore.GREEN + '   ' + '[+] ' + users + split
+        attempts += 1
+    if user == '':
+        user = Fore.RED + 'Не найдено!'
+    return user
 
-def adminpage(Url):
-    r = requests.get(f'{Url}/wp-admin', allow_redirects=False)
-    AdminPageuRL = ''
+def adminpage(url):
+    r = requests.get(f'{url}/wp-admin', allow_redirects=False)
+    adminpageurl = ''
     if r.status_code == 200:
-        AdminPageuRL = Fore.RED + 'Не найдено!'
+        adminpageurl = Fore.RED + 'Не найдено!'
     elif r.status_code == 301:
-        AdminPageuRL = Fore.GREEN + '   ' + f'{Url}/wp-admin'
-    return AdminPageuRL
+        adminpageurl = Fore.GREEN + '   ' + f'{url}/wp-admin'
+    return adminpageurl
 
-def infoaboutwebsite(Url):
-    B = builtwith.parse(Url)
-    Last = ''
-    for N in B:
-        Last = N
-    Info = ''
-    Count = 0
-    for Name in B:
-        Count = len(B[Name]) -1
-        Values = ''
-        for Value in B[Name]:
-            Split = ' | '
-            if Value == B[Name][Count]:
-                Split = ''
-            Values += Value+Split
-        if Name == Last:
-            Info += Fore.GREEN + '   ' + '[+]'+Name.replace('-','').title()+': '+Values
-        else:
-            Info += Fore.GREEN + '   '+'[+]'+Name.replace('-',' ').title()+': '+Values+'\n'
-
-    return Info
+def infoaboutwebsite(url):
+    data = builtwith.parse(url)
+    return data
 
 def wordpressgetinfo(Target):
     try:
-        Url = UrlTools(Target).title()
-        Ip = socket.gethostbyname(Url)
+        url = urlTools(Target).title()
+        Ip = socket.gethostbyname(url)
     except socket.gaierror:
-        print('Неправильный домен или домен третьего уровня!')
-        return
-    Username = Fore.YELLOW + '[+] Пользователи: \n' + getusernamewordpress(f'http://{Url}')
-    AdminpageUrl = Fore.YELLOW + '[+] Админка: \n' + adminpage(f'http://{Url}')
-    Infowebsite = Fore.YELLOW + '[+] Информация: \n' + infoaboutwebsite(f'http://{Url}')
-    print(Fore.RED + f'Домен: {Url}\nIP: {Ip}\n{Infowebsite}\n{Username}\n{AdminpageUrl}') #вывод информации
+        total_dot = url.count('.')
+        if total_dot > 1:
+            print(Fore.RED + 'Домены третьего уровня не поддерживаются!')
+            return
+        else:
+            print(Fore.RED + 'Такого домена не существует!')
+            return
+            
+    Username = Fore.YELLOW + '[+] Пользователи: \n' + getusernamewordpress(f'http://{url}')
+    Adminpageurl = Fore.YELLOW + '[+] Админка: \n' + adminpage(f'http://{url}')
+    Infowebsite = Fore.YELLOW + '[+] Информация: \n' + str(infoaboutwebsite(f'http://{url}'))
+    print(Fore.RED + f'Домен: {url}\nIP: {Ip}\n{Infowebsite}\n{Username}\n{Adminpageurl}') #вывод информации
 
 #Brute MD5 Section
 def computeMD5hash(string):
@@ -244,8 +235,7 @@ def computeMD5hash(string):
   m.update(string.encode('utf-8'))
   return m.hexdigest()
 
-def BruteMD5(md5hash):
-    maxlen = int(input('Максимальная длина брута: '))
+def BruteMD5(md5hash, minlen, maxlen):
 
     chr = '''1): ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklnmopqrstuvwxyz1234567890
 2): abcdefghijklnmopqrstuvwxyz1234567890
@@ -273,45 +263,48 @@ def BruteMD5(md5hash):
         chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     elif char_num == 7:
         chars = 'abcdefghijklnmopqrstuvwxyz'
+    else:
+        print(Fore.RED + 'Такого варианта не существует!')
+        return
 
-    dic = input('Сохранить в TXT? (Y/N): ')
-    if dic.lower() == 'y':
+    saveit = str(input('Сохранить в TXT? (Y/N): '))
+    if saveit == 'Y' or saveit == 'y':
         name = input('Имя файла без расширения: ') + '.txt'
 
     stop = 0
     found = 0
     lines = 0
 
-    if dic.lower() == 'y':
-        _file = open(name, 'w')
+    if saveit == 'Y' or saveit == 'y':
+        filetxt = open(name, 'w')
 
-    tic = time.time()
+    startedtime = time.time()
 
-    for length in range(1, maxlen):
+    for length in range(minlen, maxlen):
         to_attempt = product(chars, repeat=length)
         for attempt in to_attempt:
           crypt = computeMD5hash(''.join(attempt))
           if crypt == md5hash:
             print(Fore.GREEN + '[CRACKED] {} = {}\n'.format(crypt, ''.join(attempt)))
-            if dic == 'Y' or dic == 'y':
-              _file.write('[CRACKED] {} = {}\n'.format(crypt, ''.join(attempt)))
+            if saveit == 'Y' or saveit == 'y':
+              filetxt.write('[CRACKED] {} = {}\n'.format(crypt, ''.join(attempt)))
             stop = 1
             found = 1
             break
           else:
-            if dic.lower() == 'y':
-              _file.write('{} = {}\n'.format(crypt, ''.join(attempt)))
+            if saveit == 'Y' or saveit == 'y':
+              filetxt.write('{} = {}\n'.format(crypt, ''.join(attempt)))
             print('{} - {}'.format(''.join(attempt), crypt))
             lines += 1
         if stop == 1:
           break
 
-    if dic.lower() == 'y':
-        _file.close()
-    toc = time.time()
-    ttn = toc - tic
+    if saveit == 'Y' or saveit == 'y':
+        filetxt.close()
+    now = time.time()
+    timespent = now - startedtime
 
-    print(Fore.GREEN + 'Готово! Завершено через {} секунд. Всего хэшей было сгенерированно - {}'.format(str(ttn), str(lines)))
+    print(Fore.GREEN + 'Готово! Завершено через {} секунд. Всего хэшей было сгенерированно - {}'.format(str(timespent), str(lines)))
     if found == 0:
         print(Fore.RED + 'MD5 не сбручен :(')
 
@@ -327,7 +320,7 @@ def csgoflood(port):
                     tn.write(b"status\n")
                     time.sleep(timer)
             else:
-                sys.exit(0)
+                exit(1)
     except ConnectionRefusedError:
         print('Хост не найден!')
 
@@ -396,7 +389,9 @@ while True:
     if start == 'brutemd5':
         clear()
         md5hash = input('MD5 Hash: ')
-        BruteMD5(md5hash)
+        minlen = int(input('Минимальная длина брута: '))
+        maxlen = int(input('Максимальная длина брута: '))
+        BruteMD5(md5hash, minlen, maxlen)
     if start == 'csgoflood':
         clear()
         port = input('Порт для подключения: ')
