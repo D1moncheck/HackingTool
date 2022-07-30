@@ -15,3 +15,27 @@
 - Брутфорс MD5 хэша
 - CSGO FLOOD (CSGO нужно запустить с следующими параметрами игры: -netconport [тут порт])
 - UDP FLOOD
+
+## Быстрый старт
+
+### Установка библиотек
+
+Установка производиться из папки с репозиторием!
+
+Windows:
+        
+    pip isntall -r requirements.txt
+
+Linux:
+        
+    pip3 isntall -r requirements.txt
+        
+### Использование
+
+Windows:
+        
+    python ./hackingtool.py
+
+Linux:
+        
+    python3 hackingtool.py -s linux
