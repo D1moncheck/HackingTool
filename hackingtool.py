@@ -18,7 +18,6 @@ import json
 from itertools import product
 import hashlib
 from telnetlib import Telnet
-from fake_useragent import UserAgent
 import subprocess
 
 #используется argparse для корректной работы с Windows и Linux. При отсутствии аргументов стандартно будет выбран Windows.
@@ -28,7 +27,51 @@ args = parser.parse_args()
 
 init(autoreset=True) #авторесет для colorama
 
-ua = UserAgent() #переменная содержающая функцию библиотеки fake_useragent
+def fakeuseragent():
+    ua = random.choice(('Mozilla/5.0 (Linux; Android 9; MIBOX4 Build/PI; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.101 Mobile Safari/537.36',
+'Mozilla/5.0 (Linux; Android 8.0.0; SM-A520F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.81 Mobile Safari/537.36',
+'Mozilla/5.0 (Linux; U; Android 10; en-US; SM-N975F Build/QP1A.190711.020) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.108 UCBrowser/13.3.2.1303 Mobile Safari/537.36',
+'Mozilla/5.0 (Linux; Android 8.1.0; W10TWF19) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.83 Safari/537.36',
+'Mozilla/5.0 (Linux; arm_64; Android 10.0; MI 9T Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.4.4.76.00 SA/1 Mobile Safari/537.36',
+'Opera/8.55 (Windows NT 6.2; en-US) Presto/2.9.196 Version/11.00',
+'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_6 rv:3.0) Gecko/20210822 Firefox/35.0',
+'Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 6.2; Trident/5.0)',
+'Opera/9.94 (X11; Linux i686; sl-SI) Presto/2.8.165 Version/10.00',
+'Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_8_5) AppleWebKit/5360 (KHTML, like Gecko) Chrome/40.0.819.0 Mobile Safari/5360',
+'Mozilla/5.0 (Windows 95; sl-SI; rv:1.9.1.20) Gecko/20140806 Firefox/36.0',
+'Mozilla/5.0 (Windows NT 5.01; sl-SI; rv:1.9.0.20) Gecko/20140716 Firefox/36.0',
+'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_8 rv:2.0; sl-SI) AppleWebKit/535.14.2 (KHTML, like Gecko) Version/5.0 Safari/535.14.2',
+'Mozilla/5.0 (iPhone; CPU iPhone OS 7_1_1 like Mac OS X; sl-SI) AppleWebKit/533.50.7 (KHTML, like Gecko) Version/4.0.5 Mobile/8B111 Safari/6533.50.7',
+'Opera/8.10 (X11; Linux x86_64; en-US) Presto/2.12.335 Version/10.00',
+'Opera/8.18 (X11; Linux x86_64; sl-SI) Presto/2.12.290 Version/10.00',
+'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/3.1)',
+'Opera/8.33 (Windows NT 6.2; en-US) Presto/2.11.241 Version/12.00',
+'Mozilla/5.0 (iPad; CPU OS 8_0_2 like Mac OS X; en-US) AppleWebKit/531.9.1 (KHTML, like Gecko) Version/3.0.5 Mobile/8B113 Safari/6531.9.1',
+'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_9 rv:3.0; en-US) AppleWebKit/534.12.5 (KHTML, like Gecko) Version/5.0 Safari/534.12.5',
+'Mozilla/5.0 (Macintosh; PPC Mac OS X 10_7_1 rv:5.0; sl-SI) AppleWebKit/532.40.2 (KHTML, like Gecko) Version/5.1 Safari/532.40.2',
+'Opera/8.77 (X11; Linux x86_64; en-US) Presto/2.9.207 Version/12.00',
+'Opera/8.61 (Windows 95; en-US) Presto/2.10.199 Version/12.00',
+'Opera/9.23 (Windows NT 6.1; sl-SI) Presto/2.12.271 Version/10.00',
+'Mozilla/5.0 (X11; Linux i686) AppleWebKit/5320 (KHTML, like Gecko) Chrome/38.0.897.0 Mobile Safari/5320',
+'Mozilla/5.0 (Windows NT 6.2) AppleWebKit/5360 (KHTML, like Gecko) Chrome/40.0.841.0 Mobile Safari/5360',
+'Opera/8.77 (Windows 98; en-US) Presto/2.10.351 Version/12.00',
+'Mozilla/5.0 (Windows; U; Windows NT 6.2) AppleWebKit/532.48.4 (KHTML, like Gecko) Version/5.0.4 Safari/532.48.4',
+'Mozilla/5.0 (iPhone; CPU iPhone OS 7_2_2 like Mac OS X; en-US) AppleWebKit/535.13.6 (KHTML, like Gecko) Version/3.0.5 Mobile/8B111 Safari/6535.13.6',
+'Mozilla/5.0 (iPad; CPU OS 7_1_1 like Mac OS X; sl-SI) AppleWebKit/534.23.1 (KHTML, like Gecko) Version/4.0.5 Mobile/8B111 Safari/6534.23.1',
+'Mozilla/5.0 (iPhone; CPU iPhone OS 8_0_2 like Mac OS X; sl-SI) AppleWebKit/535.43.5 (KHTML, like Gecko) Version/3.0.5 Mobile/8B114 Safari/6535.43.5',
+'Opera/8.79 (Windows NT 6.1; en-US) Presto/2.12.207 Version/10.00',
+'Mozilla/5.0 (compatible; MSIE 11.0; Windows 98; Win 9x 4.90; Trident/5.1)',
+'Mozilla/5.0 (Windows NT 6.2; en-US; rv:1.9.1.20) Gecko/20170411 Firefox/35.0',
+'Mozilla/5.0 (compatible; MSIE 8.0; Windows 95; Trident/3.0)',
+'Opera/8.57 (Windows NT 5.0; en-US) Presto/2.11.182 Version/11.00',
+'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/5322 (KHTML, like Gecko) Chrome/40.0.839.0 Mobile Safari/5322',
+'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2 rv:3.0) Gecko/20141120 Firefox/36.0',
+'Mozilla/5.0 (compatible; MSIE 11.0; Windows NT 6.2; Trident/5.0)',
+'Mozilla/5.0 (Windows NT 6.2; sl-SI; rv:1.9.0.20) Gecko/20120528 Firefox/37.0',
+'Opera/9.35 (Windows 98; Win 9x 4.90; en-US) Presto/2.8.349 Version/11.00',
+'Opera/9.99 (Windows NT 5.1; sl-SI) Presto/2.9.254 Version/10.00'
+))
+    return ua
 
 #ASCII ART
 def art():
@@ -79,7 +122,7 @@ def tiktokparsing(username):
     try:
         url = f'https://socialblade.com/tiktok/user/{username}' #статистика socialblade
         headers = {
-            'User-Agent': ua.random,
+            'User-Agent': fakeuseragent(),
             'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
         }
         response = requests.get(url, headers=headers)
@@ -106,7 +149,7 @@ def tiktokparsing(username):
 #vk parsing section
 def vkparsing(url):
     headers = {
-        'User-Agent': ua.random,
+        'User-Agent': fakeuseragent(),
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
     }
     response = requests.get(url, headers=headers)
@@ -129,7 +172,7 @@ def vkparsing(url):
 #ok parsing section
 def okparsing(url):
     headers = {
-        'User-Agent': ua.random,
+        'User-Agent': fakeuseragent,
         'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
     }
     response = requests.get(url, headers=headers)
@@ -184,7 +227,7 @@ def urlTools(url):
 def getusernamewordpress(url):
     Headers = {
     'Accept':'*/*',
-    'User-Agent': ua.random
+    'User-Agent': fakeuseragent()
     }
     r = requests.get(f'{url}/wp-json/wp/v2/users/', headers=Headers).text
     j = json.loads(r)
