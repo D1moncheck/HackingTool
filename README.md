@@ -14,7 +14,7 @@
     vkparser - Парсинг VK в TXT файл
     okparser - Парсинг OK.RU в TXT файл
     brutemd5 - Брутфорс MD5 хэша
-    csgoflood - CSGO FLOOD (CSGO нужно запустить с следующими параметрами игры: -netconport [тут порт])
+    csgoflood - CSGO FLOOD (CSGO нужно запустить с следующими параметрами игры: -netconport [порт])
     udpflood - UDP FLOOD
 
 ## :zap: Быстрый старт
