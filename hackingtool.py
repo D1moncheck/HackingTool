@@ -238,7 +238,7 @@ def getusernamewordpress(url):
         split = '\n'
         if count == attempts :
             split = ''
-        users = j[attempts ]['slug']
+        users = j[attempts]['slug']
         if not users == '':
             user += Fore.GREEN + '   ' + '[+] ' + users + split
         attempts += 1
@@ -379,7 +379,6 @@ def clear():
     elif system == 'linux':
         os.system('clear') 
 
-
 art()
 
 #запуск цикла с "командной" строкой
@@ -395,11 +394,11 @@ while True:
 		$ ping - нагрузка сервера многопоточными Ping запросами (PingOfDeath)
 		$ tiktokpasrser - парсинг данных с ТикТока
 		$ vkpasrser - парсинг данных с ВКонтакте
-		$ okparser - парсинг данных с одноклассников
+		$ okparser - парсинг данных с Одноклассников
 		$ udpflood - атака на IP до отказа (UDP)
 		$ wordpress - информация о CMS Wordpress
 		$ brutemd5 - брутфорс md5 хэша
-		$ csgoflood - CSGO Status Flood (Параметры запуска CSGO: -netconport [тут порт])
+		$ csgoflood - CSGO Status Flood (Параметры запуска CSGO: -netconport [порт])
 		$ clear - очистка консоли
 		$ exit - выход
 		''')
