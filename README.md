@@ -1,10 +1,8 @@
+<p align="center"><a href="https://github.com/D1moncheck/HackingTool"><img src="https://user-images.githubusercontent.com/79802366/181876935-533a8830-7aa7-4d0a-b4ef-1937e733b26c.png" alt="Logo" height="80" width="80"/></a></p>
 <h1 align="center">HackingTool</h1>
 <p align="center">Простая утилита, которая поможет опытному пользователю</p>
 
-
-![Screenshot](https://user-images.githubusercontent.com/79802366/174639396-5b6f3aee-4b85-4cc7-99a4-0b845251c57f.png)
-
-## :zap: Функции
+## :hear_no_evil: Команды
 
     checkhost - Проверить ресурс на работоспособность
     ping - Нагрузить севрер Ping запросами (PingOfDeath)
@@ -16,26 +14,28 @@
     csgoflood - CSGO FLOOD (CSGO нужно запустить с следующими параметрами игры: -netconport [тут порт])
     udpflood - UDP FLOOD
 
-## Быстрый старт
+## :zap: Быстрый старт
 
-### Установка библиотек
+### :arrow_down: Установка библиотек
 
 Установка производиться из папки с репозиторием!
 
-Windows:
+**Windows:**
         
     pip isntall -r requirements.txt
 
-Linux:
+**Linux:**
         
     pip3 isntall -r requirements.txt
         
-### Использование
+### :octocat: Использование
 
-Windows:
+**Windows:**
         
     python ./hackingtool.py
 
-Linux:
+**Linux:**
         
     python3 hackingtool.py -s linux
+    
+<p align="center"><a href="https://github.com/D1moncheck/HackingTool#"><img src="http://randojs.com/images/backToTopButtonTransparentBackground.png" alt="Back to top" height="29"/></a></p>
