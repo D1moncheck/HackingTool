@@ -1,18 +1,20 @@
-# HackingTool [![License](https://img.shields.io/github/license/D1moncheck/HackingTool.svg)](https://github.com/D1moncheck/HackingTool)
+<h1 align="center">HackingTool</h1>
+<p align="center">Простая утилита, которая поможет опытному пользователю</p>
+
 
 ![Screenshot](https://user-images.githubusercontent.com/79802366/174639396-5b6f3aee-4b85-4cc7-99a4-0b845251c57f.png)
 
-## Функции
+## :zap: Функции
 
-- Проверить ресурс на работоспособность
-- Нагрузить севрер Ping запросами (PingOfDeath)
-- Информация о CMS Wordpress
-- Парсинг TikTok в TXT файл
-- Парсинг VK в TXT файл
-- Парсинг OK.RU в TXT файл
-- Брутфорс MD5 хэша
-- CSGO FLOOD (CSGO нужно запустить с следующими параметрами игры: -netconport [тут порт])
-- UDP FLOOD
+    checkhost - Проверить ресурс на работоспособность
+    ping - Нагрузить севрер Ping запросами (PingOfDeath)
+    wordpress - Информация о CMS Wordpress
+    tiktokparser - Парсинг TikTok в TXT файл
+    vkparser - Парсинг VK в TXT файл
+    okparser - Парсинг OK.RU в TXT файл
+    brutemd5 - Брутфорс MD5 хэша
+    csgoflood - CSGO FLOOD (CSGO нужно запустить с следующими параметрами игры: -netconport [тут порт])
+    udpflood - UDP FLOOD
 
 ## Быстрый старт
 
