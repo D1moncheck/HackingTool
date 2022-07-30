@@ -1,6 +1,9 @@
 <p align="center"><a href="https://github.com/D1moncheck/HackingTool"><img src="https://user-images.githubusercontent.com/79802366/181876935-533a8830-7aa7-4d0a-b4ef-1937e733b26c.png" alt="Logo" height="80" width="80"/></a></p>
 <h1 align="center">HackingTool</h1>
 <p align="center">Простая утилита, которая поможет опытному пользователю</p>
+<p align="center"><img src="https://img.shields.io/github/stars/D1moncheck/HackingTool?color=green&label=Starred" alt="Stars"> <img src="https://img.shields.io/badge/Made%20in-Russia-blue" alt="Made in Russia"></p>
+
+<p align="center"><img src="https://i.giphy.com/media/YQitE4YNQNahy/giphy.webp" alt="Hacking"></p>
 
 ## :hear_no_evil: Команды
 
