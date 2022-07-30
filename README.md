@@ -1,6 +1,4 @@
-# HackingTool
-
-[![License](https://img.shields.io/github/license/D1moncheck/HackingTool.svg)](https://github.com/D1moncheck/HackingTool)
+# HackingTool [![License](https://img.shields.io/github/license/D1moncheck/HackingTool.svg)](https://github.com/D1moncheck/HackingTool)
 
 ![Screenshot](https://user-images.githubusercontent.com/79802366/174639396-5b6f3aee-4b85-4cc7-99a4-0b845251c57f.png)
 
